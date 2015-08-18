@@ -65,17 +65,34 @@ function islandora_internet_archive_bookreader_search_callback($object_id, $term
     drupal_exit();
   }
 
-  $results = islandora_paged_content_perform_solr_highlighting_query($term, array(
-    'fq' => array(format_string('!field:("info:fedora/!value" OR "!value")', array(
+  $full_query_string = format_string('!field:("info:fedora/!value" OR "!value") AND !text_field:("!search_term")', array(
       '!field' => variable_get('islandora_internet_archive_bookreader_ocr_filter_field', 'RELS_EXT_isMemberOf_uri_ms'),
       '!value' => $object_id,
-    ))),
+      '!text_field' => "text_nodes_HOCR_hlt",
+      '!search_term' => $term,
+          )  
+      );
+
+  $results = islandora_paged_content_perform_solr_highlighting_query($full_query_string, array(
+
+    'hl.simple.pre' => '{{{',
+    'hl.simple.post' => '}}}',
+  ));
+/*
+  $results = islandora_paged_content_perform_solr_highlighting_query($term, array(
+      'fq' => array(format_string('!field:("info:fedora/!value" OR "!value")', array(
+      '!field' => variable_get('islandora_internet_archive_bookreader_ocr_filter_field', 'RELS_EXT_isMemberOf_uri_ms'),
+      '!value' => $object_id
+       ))),
+
     'hl.tag.pre' => '{{{',
     'hl.tag.post' => '}}}',
-    'defType' => 'dismax',
   ));
+*/
   $results = islandora_internet_archive_bookreader_remap_highlighting_for_bookreader_results($results);
+
   drupal_json_output($results);
+
   drupal_exit();
 }
 
