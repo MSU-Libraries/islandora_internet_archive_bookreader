@@ -524,7 +524,7 @@
   IslandoraBookReader.prototype.toggleFullScreen = function() {
     this.fullscreen = (this.fullscreen ? false : true);
     if(this.fullscreen) {
-      $('div#book-viewer').css({
+      $('div#BookReader').css({
         'position': 'fixed',
         'width': '100%',
         'height': '100%',
